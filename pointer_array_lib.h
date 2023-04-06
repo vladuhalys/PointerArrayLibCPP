@@ -46,7 +46,7 @@ void random(T* array, int size = 1)
 	srand(time(0));
 	if (array == nullptr)
 	{
-		cout << "Array is empty" << endl;
+		error_message("Array is empty" << endl);
 		return;
 	}
 	for (size_t i = 0; i < size; i++)
@@ -60,7 +60,7 @@ void print(T* _array, int size = 1)
 {
 	if (_array == nullptr)
 	{
-		cout << "Array is empty" << endl;
+		error_message("Array is empty" << endl);
 		return;
 	}
 	for (size_t i = 0; i < size; i++)
@@ -69,15 +69,17 @@ void print(T* _array, int size = 1)
 		{
 			access_message(_array[i]); cout << " ";
 		}
-		/*else if (i == prev_last_index_push)
-		{
-			warning_message(_array[i]); cout << " ";
-		}*/
 		else
 		{
 			cout << _array[i] << " ";
 		}
 	}
+	if (last_index_remove != -1)
+	{
+		error_message("\twas removed element by index[" << last_index_remove << "]");
+		last_index_remove = -1;
+	}
+		
 	cout << endl;
 }
 
@@ -124,7 +126,7 @@ void insert(T* &array, int &size, T element, int index)
 	
 	if (index < 0 || index > size)
 	{
-		cout << "Index is out of range" << endl;
+		error_message("Index is out of range" << endl);
 		return;
 	}
 	if (index == 0)
@@ -150,4 +152,60 @@ void insert(T* &array, int &size, T element, int index)
 			temp[i] = array[i - 1];
 	}
 	array = temp;
+}
+
+
+template<typename T>
+bool remove(T*& array, int& size, int index)
+{
+	if (index < 0 || index > size)
+	{
+		error_message("Index is out of range" << endl);
+		return false;
+	}
+	if (index == last_index_push)
+		last_index_push = -1;
+	size--;
+	T* temp = new T[size];
+	for (size_t i = 0; i < size; i++)
+	{
+		if (i < index)
+		{
+			temp[i] = array[i];
+		}
+		else if (i >= index)
+		{
+			temp[i] = array[i + 1];
+		}
+	}
+	array = temp;
+	last_index_remove = index;
+	return true;
+}
+template<typename T>
+int find(T* array, int size, T element)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		if (array[i] == element)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+template<typename T>
+bool remove_at(T*& array, int& size, T element)
+{
+	int index = find<T>(array, size, element);
+	if (index == -1)
+	{
+		return false;
+	}
+	else
+	{
+		
+		return remove<T>(array, size, index);
+	}
 }
